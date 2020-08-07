@@ -18,31 +18,33 @@ class User(Model):
 class Stock(Model):  #STILL BUILDING THIS. STOCKS AND WATCHLISTS WOULD HAVE A MANY TO MANY RELATIONSHIP.
     company_name = CharField()
     ticker = CharField()
-    current_price = DecimalField()
-    open_price = DecimalField()
-    close_price = DecimalField()
-    day_high = DecimalField()
-    day_low = DecimalField()
+    current_price = FloatField()
+    open_price = FloatField()
+    close_price = FloatField()
+    day_high = FloatField()
+    day_low = FloatField()
     volume = IntegerField()
+    created_at = DateTimeField(default=datetime.datetime.now)
+
 
     class Meta:
         database = DATABASE
 
 class Watchlist(Model): #I'D REALLY RATHER NOT HAVE A WATCHLIST MODEL. I DON'T WANT A MANY TO MANY RELATIONSHIP WITH STOCKS.
     title = CharField()
-    user = ForeignKeyField() #A way of associating a user with a watchlist. This could help overcome our (possible) inability to use a list as a datatype in the user model.
+    user = ForeignKeyField(User, backref='users') #A way of associating a user with a watchlist. This could help overcome our (possible) inability to use a list as a datatype in the user model.
     class Meta:
         database = DATABASE
 
-class WatchlistStocks(Model):
-    stock = ForeignKeyField(Stock)
-    watchlist = ForeignKeyField(Watchlist)
+# class WatchlistStocks(Model):
+#     stock = ForeignKeyField(Stock)
+#     watchlist = ForeignKeyField(Watchlist)
 
-    class Meta:
-        database = DATABASE
+#     class Meta:
+#         database = DATABASE
 
 def initialize(): #Called when initializing the app
     DATABASE.connect() #Connect to DB
-    DATABASE.create_tables([User], safe=True) #Creates the User table
+    DATABASE.create_tables([User, Stock], safe=True) #Creates the User table
     print("TABLES Created")
     DATABASE.close() #Closes the connection once initialization has occurred.
