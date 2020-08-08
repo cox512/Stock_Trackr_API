@@ -10,7 +10,7 @@ import sys
 lines = open('.env').read().splitlines()
 keys = random.choice(lines) #You can put multiple keys in the keys file. This way you can randomly choose between your keys and get more pulls.
 time = TimeSeries(key=keys, output_format='pandas')
-data, meta_data = time.get_intraday(symbol='AAPL', interval='1min', outputsize='full') #Look at docs for more options.
+data, meta_data = time.get_intraday(symbol='MSFT', interval='5min', outputsize='full') #Look at docs for more options.
 # print(ticker)
 print(data)
 

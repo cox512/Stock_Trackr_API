@@ -1,17 +1,31 @@
-from flask import Flask, g
+from flask import Flask, g, jsonify
 from flask_cors import CORS
+from flask_login import LoginManager
 from dotenv import load_dotenv
 load_dotenv()
 
 import models
-from resources.users import user #import the user var from users.py
+from resources.users import user #import the user, stock, and watchlist resources from users.py
 from resources.stocks import stock
 from resources.watchlists import watchlist
 
 DEBUG = True #Allows error messages to be printed out in the server.
 PORT = 8000
 
+login_manager = LoginManager()
 app = Flask(__name__)
+
+#User Authentication
+app.secret_key = "SECRETKEY"
+login_manager.init_app(app)
+
+#This function is a similar concept to Middleware.
+@login_manager.user_loader
+def load_user(userid):
+    try:
+        return models.User.get(model.User.id == userid)
+    except models.DoesNotExist:
+        return None
 
 @app.before_request
 def before_request():
