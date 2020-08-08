@@ -10,15 +10,15 @@ from playhouse.shortcuts import model_to_dict
 from flask_login import login_required, current_user
 
 #API search functions for stock
-lines = open('.env').read().splitlines()
-keys = random.choice(lines) #You can put multiple keys in the keys file. This way you can randomly choose between your keys and get more pulls.
-time = TimeSeries(key=keys, output_format='pandas')
-data, meta_data = time.get_intraday(symbol='MSFT', interval='5min', outputsize='full') #Look at docs for more options.
-# print(ticker)
-print(data)
+# lines = open('.env').read().splitlines()
+# keys = random.choice(lines) #You can put multiple keys in the keys file. This way you can randomly choose between your keys and get more pulls.
+# time = TimeSeries(key=keys, output_format='pandas')
+# data, meta_data = time.get_intraday(symbol='MSFT', interval='5min', outputsize='full') #Look at docs for more options.
+# # print(ticker)
+# print(data)
 
-close_data = data['4. close']
-percent_change = close_data.pct_change() #pct_change() is a built in pandas function
+# close_data = data['4. close']
+# percent_change = close_data.pct_change() #pct_change() is a built in pandas function
 
 # print(percent_change)
 
