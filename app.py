@@ -23,7 +23,7 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(userid):
     try:
-        return models.User.get(model.User.id == userid)
+        return models.User.get(models.User.id == userid)
     except models.DoesNotExist:
         return None
 
@@ -44,7 +44,7 @@ CORS(stock, origins=['http://localhost:3000'], supports_credentials=True)
 app.register_blueprint(stock, url_prefix='/api/v1/stocks')
 
 CORS(watchlist, origins=['http://localhost:3000'], supports_credentials=True)
-app.register_blueprint(stock, url_prefix='/api/v1/watchlists')
+app.register_blueprint(watchlist, url_prefix='/api/v1/watchlists')
 
 
 if __name__ == '__main__':

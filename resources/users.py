@@ -10,9 +10,10 @@ user = Blueprint('users', 'user') #Defines our view functions.
 #GET route to display users -- used for development and to check connections.
 @user.route('/', methods=['GET'])
 def get_all_users():
+    print(current_user)
     try:
         users = [model_to_dict(user) for user in models.User.select()]
-        print(users)
+        # print(users)
         return jsonify(data=users, status={"code": 200, "message": "Success"})
     except models.DoesNotExist:
         return jsonify(data={}, status={"code": 401, "message": "Error getting the resources"})
@@ -35,7 +36,7 @@ def create_user():
         del user_dict['password']
         return jsonify(data=user_dict, status={'code': 200, 'message': "Success"})
 
-#POST route to login /login
+#POST route to login 
 @user.route('/login', methods=['POST'])
 def login():
     body = request.get_json()

@@ -2,7 +2,7 @@ from peewee import *
 from flask_login import UserMixin
 import datetime
 
-DATABASE = SqliteDatabase('baggr.sqlite') #Creates our SQLite database
+DATABASE = SqliteDatabase('baggr.sqlite', pragmas={'foreign_keys': 1}) #Creates our SQLite database
 
 class User(UserMixin, Model):
     fname = CharField()
@@ -10,15 +10,15 @@ class User(UserMixin, Model):
     username = CharField(unique=True) #this will change to ForeignKeyField() I believe
     password = CharField()
     email = CharField(unique=True)
-    #watchlists = ForeignKeyField() #I think this is what I have to do in order to get this to reference my watchlists. BUT CAN I CREATE A LIST OFLISTS HERE?
+    #watchlists = ForeignKeyField() #I think this is what I have to do in order to get this to reference my watchlists. 
     created_at = DateTimeField(default=datetime.datetime.now)
 
     class Meta:
         database = DATABASE
 
-class Watchlist(Model): #I'D REALLY RATHER NOT HAVE A WATCHLIST MODEL. I DON'T WANT A MANY TO MANY RELATIONSHIP WITH STOCKS.
+class Watchlist(Model): 
     title = CharField()
-    user = ForeignKeyField(User, backref='users') #A way of associating a user with a watchlist. This could help overcome our (possible) inability to use a list as a datatype in the user model.
+    user = ForeignKeyField(User, backref='watchlists') #A way of associating a user with a watchlist. "user-one.watchlists" should give us all the watchlists associated with that user id.
     created_at = DateTimeField(default=datetime.datetime.now)
     
     class Meta:
@@ -27,14 +27,14 @@ class Watchlist(Model): #I'D REALLY RATHER NOT HAVE A WATCHLIST MODEL. I DON'T W
 class Stock(Model):  #STILL BUILDING THIS. STOCKS AND WATCHLISTS WOULD HAVE A MANY TO MANY RELATIONSHIP.
     company_name = CharField()
     ticker = CharField()
-    current_price = FloatField()
-    open_price = FloatField()
-    close_price = FloatField()
-    day_high = FloatField()
-    day_low = FloatField()
-    volume = IntegerField()
-    watchlist = ForeignKeyField(Watchlist, backref='api/v1/watchlists')
-    created_at = DateTimeField(default=datetime.datetime.now)
+    # current_price = FloatField()
+    # open_price = FloatField()
+    # close_price = FloatField()
+    # day_high = FloatField()
+    # day_low = FloatField()
+    # volume = IntegerField()
+    watchlist = ForeignKeyField(Watchlist, backref='stocks') #See the watchlist model's notes.
+    # created_at = DateTimeField(default=datetime.datetime.now)
 
     class Meta:
         database = DATABASE
