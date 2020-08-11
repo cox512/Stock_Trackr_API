@@ -9,11 +9,13 @@ watchlist = Blueprint('watchlists', 'watchlist')
 @watchlist.route('/', methods=['GET'])
 @login_required
 def get_all_watchlists():
-    print(current_user.id)
+    print(current_user)
     # print(current_user.watchlist)
     try:
-        watchlists = [model_to_dict(watchlist) for watchlist in current_user.watchlist]
-        # watchlists = [model_to_dict(watchlist) for watchlist in models.Watchlist.select()]
+        print(watchlist)
+        all_watchlists = models.Watchlist.filter(user=current_user.id)
+        # breakpoint()
+        watchlists = [model_to_dict(watchlist) for watchlist in all_watchlists]
         
         return jsonify(data=watchlists, status={"code": 200, "message": "Success"})
     except models.DoesNotExist:
