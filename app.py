@@ -1,5 +1,5 @@
 from flask import Flask, g, jsonify
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_login import LoginManager
 from dotenv import load_dotenv
 load_dotenv()

@@ -2,7 +2,7 @@ import models
 from flask import Blueprint, jsonify, request
 from flask_bcrypt import generate_password_hash, check_password_hash
 from playhouse.shortcuts import model_to_dict
-from flask_login import login_user, login_required, current_user
+from flask_login import login_user, login_required, current_user, logout_user
 
 user = Blueprint('users', 'user') #Defines our view functions.
 
@@ -22,7 +22,8 @@ def get_all_users():
 @user.route('/register', methods=["POST"])
 def create_user():
     body = request.get_json()
-    # print(body)
+    print(type(body))
+    print(body)
     body['username'] = body['username'].lower()
     try: #Looking for user by username address. If there isn't one, then we move to exception.
         models.User.get(models.User.username == body['username'])
@@ -48,18 +49,27 @@ def login():
         user_dict = model_to_dict(user)
         if check_password_hash(user_dict['password'], body['password']):
                 #correct. Log user in.
-                login_user(user)
-                print(current_user.username)
+            login_user(user)
+            # print(current_user.username)
 
                 #Sends the user data back from the database so you can use that info on the front side if needed.
-                del user_dict['password']
-                return jsonify(data=user_dict, status={'code': 200, 'message': 'Success'})
+            # del user_dict['password']
+            return jsonify(data=user_dict, status={'code': 200, 'message': 'Success'})
         else:
             return jsonify(data={}, status={'code': 401, 'message': 'Incorrect password'})
     except models.DoesNotExist:
         return jsonify(data={}, status={'code': 401, 'message': 'User does not exist'})
 
-#GET route to logout user /logout
-
+#GET route to logout user /logout -- it's a GET because we're basically just getting the route so the logout_user import can do it's dirty work.
+@user.route('/logout', methods=['GET'])
+@login_required
+def logout():
+    print("1st console: ", current_user)
+    logout_user()
+    if current_user:
+        print("2nd console: ", current_user)
+    else:
+        print("No current user")
+    return jsonify(data={}, status={'code': 200, 'message': 'Successful Logout'})
 
 
