@@ -49,6 +49,8 @@ def login():
         if check_password_hash(user_dict['password'], body['password']):
                 #correct. Log user in.
                 login_user(user)
+                print(current_user.username)
+
                 #Sends the user data back from the database so you can use that info on the front side if needed.
                 del user_dict['password']
                 return jsonify(data=user_dict, status={'code': 200, 'message': 'Success'})

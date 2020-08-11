@@ -36,7 +36,7 @@ def before_request():
 def after_request(response):
     g.db.close()
     return response
-
+    #DON'T FORGET TO ADD YOUR HEROKU SITE HERE
 CORS(user, origins=['http://localhost:3000'], supports_credentials=True) #Sets the front-end url, support credentials allows cookies to be set to the server
 app.register_blueprint(user, url_prefix='/user') #Sets the handing instructions for our routes.
 

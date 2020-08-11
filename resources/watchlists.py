@@ -22,10 +22,11 @@ def get_all_watchlists():
 @watchlist.route('/', methods=['POST'])
 @login_required
 def create_watchlists():
+    print(current_user)
     print(request.get_json())
     body = request.get_json()
     # new_watchlist = models.Watchlist.create(**body)
-    new_watchlist = models.Watchlist.create(title=body['title'], user=current_user.id, created_at=date.today())
+    new_watchlist = models.Watchlist.create(title=body, user=current_user.id, created_at=date.today())
 
     print(model_to_dict(new_watchlist))
     watchlist_dict = model_to_dict(new_watchlist)
