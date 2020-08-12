@@ -66,7 +66,7 @@ def login():
             # print(current_user.username)
 
                 #Sends the user data back from the database so you can use that info on the front side if needed.
-            # del user_dict['password']
+            del user_dict['password']
             return jsonify(data=user_dict, logged_in=True, status={'code': 200, 'message': 'Success'})
         else:
             return jsonify(data={}, status={'code': 401, 'message': 'Incorrect password'})
@@ -87,7 +87,7 @@ def logout():
 
 #UPDATE ROUTE
 @user.route('/<id>', methods=['PUT'])
-# @login_required
+@login_required
 def update_user(id):
     body = request.get_json()
     update_query = models.User.update(**body).where(models.User.id==id)
@@ -98,6 +98,11 @@ def update_user(id):
     return jsonify(data=model_to_dict(update_user), status={"code": 200, "status": "User successfully updated."})
 
 #DELETE USER ROUTE
+@user.route('/<id>', methods=['DELETE'])
+def delete_user(id):
+    user_query = models.User.delete().where(models.User.id==id)
+    user_query.execute()
+    return jsonify(data={}, success={"code": 200, "message": "User successfully deleted"})
 
 
 

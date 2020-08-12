@@ -28,7 +28,7 @@ def get_all_stocks():
 # @login_required
 def create_stocks(): #Peewee's create() method
     body = request.get_json() #'request' is a global object that is getting the json from our data request.
-    print(type(body), 'body')
+    # print(type(body), 'body')
     new_stock = models.Stock.create(company_name=body['company_name'], ticker=body['ticker'], watchlist=body['watchlist']) #Spread, similar to the use of ... in javascript
     # print(new_stock.__dict__)
     # print(dir(new_stock))
@@ -42,5 +42,24 @@ def get_one_stock(id):
     print(id, 'stock id')
     stock = models.Stock.get_by_id(id)
     stock_dict = model_to_dict(stock)
-    print(stock_dict)
+    # print(stock_dict)
     return jsonify(data=stock_dict, status={"code": 200, "message": "Success"})
+
+#UPDATE ROUTE
+@stock.route('/<id>', methods=['PUT'])
+@login_required
+def update_stock(id):
+    body = request.get_json()
+    update_query = models.Stock.update(**body).where(models.Stock.id==id)
+    #Always have to perform 'execute' on an update because of the method we're using with the database.
+    update_query.execute()
+    #After sending the query and executing it, we need 
+    update_stock=models.Stock.get_by_id(id)
+    return jsonify(data=model_to_dict(update_stock), status={"code": 200, "status": "Stock successfully updated."})
+
+#DELETE USER ROUTE
+@stock.route('/<id>', methods=['DELETE'])
+def delete_stock(id):
+    stock_query = models.Stock.delete().where(models.Stock.id==id)
+    stock_query.execute()
+    return jsonify(data={}, success={"code": 200, "message": "Stock successfully deleted"})

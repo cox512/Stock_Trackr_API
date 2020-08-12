@@ -2,7 +2,7 @@ from peewee import *
 from flask_login import UserMixin
 import datetime
 
-DATABASE = SqliteDatabase('baggr.sqlite', pragmas={'foreign_keys': 1}) #Creates our SQLite database
+DATABASE = SqliteDatabase('baggr.sqlite', pragmas={'foreign_keys': 1}) #Creates our SQLite database. Enforcing foreign_key restraints.
 
 class User(UserMixin, Model):
     fname = CharField()
@@ -33,7 +33,7 @@ class Stock(Model):
     # day_high = FloatField()
     # day_low = FloatField()
     # volume = IntegerField()
-    watchlist = ForeignKeyField(Watchlist, backref='stocks') #See the watchlist model's notes.
+    watchlist = ForeignKeyField(Watchlist, on_delete="CASCADE", backref='stocks') #See the watchlist model's notes.
     # created_at = DateTimeField(default=datetime.datetime.now)
 
     class Meta:
