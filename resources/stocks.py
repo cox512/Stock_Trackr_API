@@ -35,3 +35,12 @@ def create_stocks(): #Peewee's create() method
     print(model_to_dict(new_stock), 'model to dict')
     stock_dict = model_to_dict(new_stock)
     return jsonify(data=stock_dict, status={'code': 201, 'message': "Success"})
+
+#SHOW route
+@stock.route('/<id>', methods=['GET'])
+def get_one_stock(id):
+    print(id, 'stock id')
+    stock = models.Stock.get_by_id(id)
+    stock_dict = model_to_dict(stock)
+    print(stock_dict)
+    return jsonify(data=stock_dict, status={"code": 200, "message": "Success"})

@@ -24,7 +24,7 @@ class Watchlist(Model):
     class Meta:
         database = DATABASE
 
-class Stock(Model):  #STILL BUILDING THIS. STOCKS AND WATCHLISTS WOULD HAVE A MANY TO MANY RELATIONSHIP.
+class Stock(Model):  
     company_name = CharField()
     ticker = CharField()
     # current_price = FloatField()
@@ -38,13 +38,6 @@ class Stock(Model):  #STILL BUILDING THIS. STOCKS AND WATCHLISTS WOULD HAVE A MA
 
     class Meta:
         database = DATABASE
-
-# class WatchlistStocks(Model): This is the start of a many-to-many model
-#     stock = ForeignKeyField(Stock)
-#     watchlist = ForeignKeyField(Watchlist)
-
-#     class Meta:
-#         database = DATABASE
 
 def initialize(): #Called when initializing the app
     DATABASE.connect() #Connect to DB

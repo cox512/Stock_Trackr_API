@@ -41,6 +41,15 @@ def create_user():
         del user_dict['password']
         return jsonify(data=user_dict, logged_in=True, status={'code': 200, 'message': "Success"})
 
+#SHOW route
+@user.route('/<id>', methods=['GET'])
+def get_one_user(id):
+    print(id, 'this is the id')
+    user = models.User.get_by_id(id)
+    user_dict = model_to_dict(user)
+    print(user_dict)
+    return jsonify(data=model_to_dict(user), status={"code": 200, "message": "Success"})
+
 #POST route to login 
 @user.route('/login', methods=['POST'])
 def login():
@@ -75,5 +84,20 @@ def logout():
     else:
         print("No current user")
     return jsonify(data={}, status={'code': 200, 'message': 'Successful Logout'})
+
+#UPDATE ROUTE
+@user.route('/<id>', methods=['PUT'])
+# @login_required
+def update_user(id):
+    body = request.get_json()
+    update_query = models.User.update(**body).where(models.User.id==id)
+    #Always have to perform 'execute' on an update because of the method we're using with the database.
+    update_query.execute()
+    #After sending the query and executing it, we need 
+    update_user=models.User.get_by_id(id)
+    return jsonify(data=model_to_dict(update_user), status={"code": 200, "status": "User successfully updated."})
+
+#DELETE USER ROUTE
+
 
 

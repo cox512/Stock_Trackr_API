@@ -6,6 +6,16 @@ from datetime import date
 
 watchlist = Blueprint('watchlists', 'watchlist')
 
+#SHOW route
+@watchlist.route('/<id>', methods=['GET'])
+def get_one_watchlist(id):
+    print(id, 'watchlist id')
+    watchlist = models.Watchlist.get_by_id(id)
+    watchlist_dict = model_to_dict(watchlist)
+    print(watchlist_dict)
+    return jsonify(data=watchlist_dict, status={"code": 200, "message": "Success"})
+
+
 @watchlist.route('/', methods=['GET'])
 @login_required
 def get_all_watchlists():
