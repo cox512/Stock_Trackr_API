@@ -1,22 +1,26 @@
 import models
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, session
 from flask_bcrypt import generate_password_hash, check_password_hash
 from playhouse.shortcuts import model_to_dict
 from flask_login import login_user, login_required, current_user, logout_user
+# from jinja import escape, Markup
+
 
 user = Blueprint('users', 'user') #Defines our view functions.
 
 
-#GET route to display users -- used for development and to check connections.
+#GET route to check if a user is currently logged in.
 @user.route('/', methods=['GET'])
-def get_all_users():
-    print(current_user)
-    try:
-        users = [model_to_dict(user) for user in models.User.select()]
-        # print(users)
-        return jsonify(data=users, status={"code": 200, "message": "Success"})
-    except models.DoesNotExist:
-        return jsonify(data={}, status={"code": 401, "message": "Error getting the resources"})
+def logged_in():
+    # print(current_user)
+    # try:
+    if current_user:
+        user = [model_to_dict(current_user)]
+        return jsonify(data=user, logged_in=True, status={"code": 200, "message": "Success"})
+    return "You are not logged in"
+
+    # except models.DoesNotExist:
+    #     return jsonify(data={}, status={"code": 401, "message": "Error getting the current user"})
 
 #POST route to register /register
 @user.route('/register', methods=["POST"])
@@ -35,7 +39,7 @@ def create_user():
         user_dict = model_to_dict(user)
         #remove the password from returned data
         del user_dict['password']
-        return jsonify(data=user_dict, status={'code': 200, 'message': "Success"})
+        return jsonify(data=user_dict, logged_in=True, status={'code': 200, 'message': "Success"})
 
 #POST route to login 
 @user.route('/login', methods=['POST'])
@@ -54,7 +58,7 @@ def login():
 
                 #Sends the user data back from the database so you can use that info on the front side if needed.
             # del user_dict['password']
-            return jsonify(data=user_dict, status={'code': 200, 'message': 'Success'})
+            return jsonify(data=user_dict, logged_in=True, status={'code': 200, 'message': 'Success'})
         else:
             return jsonify(data={}, status={'code': 401, 'message': 'Incorrect password'})
     except models.DoesNotExist:
