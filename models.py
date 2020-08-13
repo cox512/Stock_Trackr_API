@@ -1,8 +1,13 @@
+import os
 from peewee import *
 from flask_login import UserMixin
 import datetime
+from playhouse.db_url import connect
 
-DATABASE = SqliteDatabase('baggr.sqlite', pragmas={'foreign_keys': 1}) #Creates our SQLite database. Enforcing foreign_key restraints.
+if 'ON_HEROKU' in os.environ:
+    DATABASE = connect(os.environ.get('DATABASE_URL'))
+else:
+    DATABASE = SqliteDatabase('baggr.sqlite', pragmas={'foreign_keys': 1}) #Creates our SQLite database. Enforcing foreign_key restraints.
 
 class User(UserMixin, Model):
     fname = CharField()
