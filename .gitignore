@@ -53,3 +53,7 @@ docs/_build/
 #Virtual Environment
 venv
 .env
+
+stock_seed.sql
+user_seed.sql
+watchlist_seed.sql
