@@ -21,11 +21,15 @@ lazy-object-proxy==1.4.3
 MarkupSafe==1.1.1
 mccabe==0.6.1
 multidict==4.7.6
+numpy==1.19.1
+pandas==1.1.0
 peewee==3.13.3
 psycopg2-binary==2.8.5
 pycparser==2.20
 pylint==2.5.3
+python-dateutil==2.8.1
 python-dotenv==0.14.0
+pytz==2020.1
 requests==2.24.0
 six==1.15.0
 toml==0.10.1
