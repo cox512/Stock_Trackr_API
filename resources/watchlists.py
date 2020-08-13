@@ -26,10 +26,6 @@ def get_all_watchlists():
         all_watchlists = models.Watchlist.filter(user=current_user.id)
         print(all_watchlists)
         # breakpoint()
-        # print(all_watchlists["title"])
-        # order_watchlists = all_watchlists.order_by(all_watchlists.title)
-        # print(order_watchlists)
-        # breakpoint()
         watchlists = [model_to_dict(watchlist) for watchlist in all_watchlists]
         return jsonify(data=watchlists, status={"code": 200, "message": "Success"})
     except models.DoesNotExist:

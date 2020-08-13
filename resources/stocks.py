@@ -30,10 +30,6 @@ def create_stocks(): #Peewee's create() method
     body = request.get_json() #'request' is a global object that is getting the json from our data request.
     print("For Add Stock: ", body)
     new_stock = models.Stock.create(ticker=body[0], watchlist=body[1])
-    # new_stock = models.Stock.create(company_name=body['company_name'], ticker=body['ticker'], watchlist=body['watchlist']) #Spread, similar to the use of ... in javascript
-    print(new_stock)
-    print(new_stock.__dict__)
-    # print(dir(new_stock))
     print(model_to_dict(new_stock), 'model to dict')
     stock_dict = model_to_dict(new_stock)
     return jsonify(data=stock_dict, status={'code': 200, 'message': "Success"})
