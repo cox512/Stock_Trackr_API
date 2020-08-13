@@ -22,6 +22,7 @@ def get_all_watchlists():
     print(current_user)
     try:
         # print(watchlist)
+        #Filter gets many items, 'get' just gets the first one.
         all_watchlists = models.Watchlist.filter(user=current_user.id)
         print(all_watchlists)
         # breakpoint()
