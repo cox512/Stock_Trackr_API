@@ -20,6 +20,7 @@ app = Flask(__name__)
 #User Authentication
 app.secret_key = os.getenv('SECRET_KEY')
 # connect(os.environ.get('DATABASE_URL'))
+app.secret_key = 'hoihnkoid'
 
 login_manager.init_app(app)
 
