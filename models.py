@@ -27,15 +27,8 @@ class Watchlist(Model):
 class Stock(Model):  
     # company_name = CharField(null=True)
     ticker = CharField()
-    # current_price = FloatField()
-    # open_price = FloatField()
-    # close_price = FloatField()
-    # day_high = FloatField()
-    # day_low = FloatField()
-    # volume = IntegerField()
     watchlist = ForeignKeyField(Watchlist, on_delete="CASCADE", backref='stocks') #See the watchlist model's notes.
-    # created_at = DateTimeField(default=datetime.datetime.now)
-
+    
     class Meta:
         database = DATABASE
 

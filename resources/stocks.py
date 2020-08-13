@@ -30,6 +30,8 @@ def create_stocks(): #Peewee's create() method
     body = request.get_json() #'request' is a global object that is getting the json from our data request.
     print("For Add Stock: ", body)
     new_stock = models.Stock.create(ticker=body[0], watchlist=body[1])
+    # new_stock = models.Stock.create(ticker=body["ticker"], watchlist=body["watchlist"])
+
     print(model_to_dict(new_stock), 'model to dict')
     stock_dict = model_to_dict(new_stock)
     return jsonify(data=stock_dict, status={'code': 200, 'message': "Success"})
@@ -55,7 +57,7 @@ def update_stock(id):
     update_stock=models.Stock.get_by_id(id)
     return jsonify(data=model_to_dict(update_stock), status={"code": 200, "status": "Stock successfully updated."})
 
-#DELETE USER ROUTE
+#DELETE ROUTE
 @stock.route('/<id>', methods=['DELETE'])
 def delete_stock(id):
     stock_query = models.Stock.delete().where(models.Stock.id==id)
