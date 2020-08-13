@@ -25,7 +25,7 @@ class Watchlist(Model):
         database = DATABASE
 
 class Stock(Model):  
-    company_name = CharField()
+    # company_name = CharField(null=True)
     ticker = CharField()
     # current_price = FloatField()
     # open_price = FloatField()

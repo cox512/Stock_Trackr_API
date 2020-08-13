@@ -45,7 +45,7 @@ def create_watchlists():
     new_watchlist = models.Watchlist.create(title=body, user=current_user.id, created_at=date.today())
     # print(model_to_dict(new_watchlist))
     watchlist_dict = model_to_dict(new_watchlist)
-    return jsonify(data=watchlist_dict, status={'code': 201, "messsage": "Success"})
+    return jsonify(data=watchlist_dict, status={'code': 200, "messsage": "Success"})
 
 #UPDATE ROUTE
 @watchlist.route('/<id>', methods=['PUT'])
