@@ -1,5 +1,5 @@
 import os
-from flask import Flask, g, jsonify
+from flask import Flask, g, jsonify, session, redirect, url_for, request
 from flask_cors import CORS, cross_origin
 from flask_login import LoginManager
 from dotenv import load_dotenv
@@ -8,6 +8,8 @@ import models
 from resources.users import user #import the user, stock, and watchlist resources from users.py
 from resources.stocks import stock
 from resources.watchlists import watchlist
+from playhouse.db_url import connect
+# from markupsafe import escape
 
 DEBUG = True #Allows error messages to be printed out in the server.
 PORT = 8000
@@ -16,7 +18,8 @@ login_manager = LoginManager()
 app = Flask(__name__)
 
 #User Authentication
-app.secret_key = "SECRETKEY"
+SECRET_KEY = os.getenv('SECRET_KEY')
+
 login_manager.init_app(app)
 
 #This function is a similar concept to Middleware.
@@ -26,6 +29,12 @@ def load_user(userid):
         return models.User.get(models.User.id == userid)
     except models.DoesNotExist:
         return None
+
+# @app.route('/')
+# def index():
+#     if 'username' in session:
+#         return 'Logged in as %s' % escape(session['username'])
+#     return 'You are not logged in'
 
 #DON'T FORGET TO ADD YOUR HEROKU SITE HERE
 CORS(user, origins=['http://localhost:3000'], supports_credentials=True) #Sets the front-end url, support credentials allows cookies to be set to the server

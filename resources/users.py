@@ -12,7 +12,8 @@ user = Blueprint('users', 'user') #Defines our view functions.
 #GET route to check if a user is currently logged in.
 @user.route('/', methods=['GET'])
 def logged_in():
-    # print(current_user)
+    print(model_to_dict(current_user))
+    print(current_user)
     # try:
     if current_user:
         user = [model_to_dict(current_user)]
