@@ -57,3 +57,6 @@ venv
 stock_seed.sql
 user_seed.sql
 watchlist_seed.sql
+pull.py
+baggr.sql
+.vscode
