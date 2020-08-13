@@ -18,7 +18,8 @@ login_manager = LoginManager()
 app = Flask(__name__)
 
 #User Authentication
-SECRET_KEY = os.getenv('SECRET_KEY')
+app.secret_key = os.getenv('SECRET_KEY')
+# connect(os.environ.get('DATABASE_URL'))
 
 login_manager.init_app(app)
 
@@ -29,12 +30,6 @@ def load_user(userid):
         return models.User.get(models.User.id == userid)
     except models.DoesNotExist:
         return None
-
-# @app.route('/')
-# def index():
-#     if 'username' in session:
-#         return 'Logged in as %s' % escape(session['username'])
-#     return 'You are not logged in'
 
 #DON'T FORGET TO ADD YOUR HEROKU SITE HERE
 CORS(user, origins=['http://localhost:3000'], supports_credentials=True) #Sets the front-end url, support credentials allows cookies to be set to the server
