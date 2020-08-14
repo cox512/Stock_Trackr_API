@@ -1,5 +1,5 @@
 import os
-from flask import Flask, g, jsonify, session, redirect, url_for, request
+from flask import Flask, g, jsonify, session, redirect, url_for, request, make_response
 from flask_cors import CORS, cross_origin
 from flask_login import LoginManager
 from dotenv import load_dotenv
@@ -31,6 +31,17 @@ def load_user(userid):
         return models.User.get(models.User.id == userid)
     except models.DoesNotExist:
         return None
+
+#example from https://github.com/GoogleChromeLabs/samesite-examples/blob/master/python-flask.md
+# @app.route('/')
+# def hello_world():
+#     resp = make_response('Hello, World!');
+#     # Set a same-site cookie for first-party contexts
+#     resp.set_cookie('cookie1', 'value1', samesite='Lax');
+#     # Set a cross-site cookie for third-party contexts
+#     resp.set_cookie('cookie2', 'value2', samesite='None', secure=True);
+#     return resp
+
 
 #DON'T FORGET TO ADD YOUR HEROKU SITE HERE
 CORS(user, origins=['http://localhost:3000', 'https://ten-bagger.herokuapp.com'], supports_credentials=True) #Sets the front-end url, support credentials allows cookies to be set to the server

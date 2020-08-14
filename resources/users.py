@@ -68,6 +68,7 @@ def login():
 
                 #Sends the user data back from the database so you can use that info on the front side if needed.
             del user_dict['password']
+            
             return jsonify(data=user_dict, logged_in=True, status={'code': 200, 'message': 'Success'})
         else:
             return jsonify(data={}, status={'code': 401, 'message': 'Incorrect password'})
