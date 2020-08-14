@@ -1,5 +1,5 @@
 import models
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, jsonify, request, session, make_response
 from flask_bcrypt import generate_password_hash, check_password_hash
 from playhouse.shortcuts import model_to_dict
 from flask_login import login_user, login_required, current_user, logout_user
@@ -62,13 +62,19 @@ def login():
         #if username found, check the password
         user_dict = model_to_dict(user)
         if check_password_hash(user_dict['password'], body['password']):
-                #correct. Log user in.
+            #correct. Log user in.
             login_user(user)
+            # Set a same-site cookie for first-party contexts - TESTING
+            # resp = make_response('Hello, World!')
+            # print(resp)
+            # resp.headers.add('Set-Cookie','cookie2=value2; SameSite=None; Secure')
+
+            # resp.set_cookie('cookie1', 'value1', samesite='None')
             # print(current_user.username)
 
                 #Sends the user data back from the database so you can use that info on the front side if needed.
             del user_dict['password']
-            
+
             return jsonify(data=user_dict, logged_in=True, status={'code': 200, 'message': 'Success'})
         else:
             return jsonify(data={}, status={'code': 401, 'message': 'Incorrect password'})

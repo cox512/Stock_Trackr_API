@@ -33,14 +33,14 @@ def load_user(userid):
         return None
 
 #example from https://github.com/GoogleChromeLabs/samesite-examples/blob/master/python-flask.md
-# @app.route('/')
-# def hello_world():
-#     resp = make_response('Hello, World!');
-#     # Set a same-site cookie for first-party contexts
-#     resp.set_cookie('cookie1', 'value1', samesite='Lax');
-#     # Set a cross-site cookie for third-party contexts
-#     resp.set_cookie('cookie2', 'value2', samesite='None', secure=True);
-#     return resp
+@app.route('/')
+def hello_world():
+    resp = make_response('Hello, World!')
+    # Set a same-site cookie for first-party contexts
+    # resp.set_cookie('cookie1', 'value1', samesite='Lax');
+    # Set a cross-site cookie for third-party contexts
+    resp.set_cookie(samesite='None')
+    return resp
 
 
 #DON'T FORGET TO ADD YOUR HEROKU SITE HERE
