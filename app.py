@@ -17,12 +17,22 @@ PORT = 8000
 login_manager = LoginManager()
 app = Flask(__name__)
 
+app.config.update(
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SAMESITE='None',
+)
+
 #User Authentication
 app.secret_key = os.getenv('SECRET_KEY')
 # connect(os.environ.get('DATABASE_URL'))
 app.secret_key = 'hoihnkoid'
 
 login_manager.init_app(app)
+
+# app.config.update(
+#     SESSION_COOKIE_SECURE=True,
+#     SESSION_COOKIE_SAMESITE='None',
+# )
 
 #This function is a similar concept to Middleware.
 @login_manager.user_loader
@@ -33,14 +43,16 @@ def load_user(userid):
         return None
 
 #example from https://github.com/GoogleChromeLabs/samesite-examples/blob/master/python-flask.md
-@app.route('/')
-def hello_world():
-    resp = make_response('Hello, World!')
-    # Set a same-site cookie for first-party contexts
-    # resp.set_cookie('cookie1', 'value1', samesite='Lax');
-    # Set a cross-site cookie for third-party contexts
-    resp.set_cookie(samesite='None')
-    return resp
+# @app.route('/')
+# def hello_world():
+#     resp = make_response('Hello, World!')
+#     # Set a same-site cookie for first-party contexts
+#     # resp.set_cookie('cookie1', 'value1', samesite='Lax');
+#     # Set a cross-site cookie for third-party contexts
+#     resp.set_cookie('cookie1', 'value1', samesite='None', secure=True)
+
+#     # resp.set_cookie(samesite='None')
+#     return resp
 
 
 #DON'T FORGET TO ADD YOUR HEROKU SITE HERE

@@ -68,8 +68,7 @@ def login():
             # resp = make_response('Hello, World!')
             # print(resp)
             # resp.headers.add('Set-Cookie','cookie2=value2; SameSite=None; Secure')
-
-            # resp.set_cookie('cookie1', 'value1', samesite='None')
+            # resp.set_cookie('cookie2', 'value2', samesite='None', secure=True)
             # print(current_user.username)
 
                 #Sends the user data back from the database so you can use that info on the front side if needed.
