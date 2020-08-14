@@ -6,7 +6,7 @@ from flask_login import login_user, login_required, current_user, logout_user
 # from jinja import escape, Markup
 
 
-user = Blueprint('users', 'user') #Defines our view functions.
+user = Blueprint('users', 'user', url_prefix='/user') #Defines our view functions.
 
 
 #GET route to check if a user is currently logged in.
@@ -27,8 +27,6 @@ def logged_in():
 @user.route('/register', methods=["POST"])
 def create_user():
     body = request.get_json()
-    print(type(body))
-    print(body)
     body['username'] = body['username'].lower()
     try: #Looking for user by username address. If there isn't one, then we move to exception.
         models.User.get(models.User.username == body['username'])
@@ -62,29 +60,22 @@ def login():
         #if username found, check the password
         user_dict = model_to_dict(user)
         if check_password_hash(user_dict['password'], body['password']):
-            #correct. Log user in.
+            # If correct. Log user in.
             login_user(user)
-            # Set a same-site cookie for first-party contexts - TESTING
-            # resp = make_response('Hello, World!')
-            # print(resp)
-            # resp.headers.add('Set-Cookie','cookie2=value2; SameSite=None; Secure')
-            # resp.set_cookie('cookie2', 'value2', samesite='None', secure=True)
-            # print(current_user.username)
+            print(current_user.username)
 
                 #Sends the user data back from the database so you can use that info on the front side if needed.
-            del user_dict['password']
-
+            # del user_dict['password']
             return jsonify(data=user_dict, logged_in=True, status={'code': 200, 'message': 'Success'})
         else:
             return jsonify(data={}, status={'code': 401, 'message': 'Incorrect password'})
     except models.DoesNotExist:
         return jsonify(data={}, status={'code': 401, 'message': 'User does not exist'})
 
-#GET route to logout user /logout -- it's a GET because we're basically just getting the route so the logout_user import can do it's dirty work.
+#GET route to logout user
 @user.route('/logout', methods=['GET'])
-@login_required
+# @login_required
 def logout():
-    print("1st console: ", current_user)
     logout_user()
     if current_user:
         print("2nd console: ", current_user)
@@ -94,7 +85,7 @@ def logout():
 
 #UPDATE ROUTE
 @user.route('/<id>', methods=['PUT'])
-@login_required
+# @login_required
 def update_user(id):
     body = request.get_json()
     update_query = models.User.update(**body).where(models.User.id==id)

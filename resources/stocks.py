@@ -47,7 +47,7 @@ def get_one_stock(id):
 
 #UPDATE ROUTE
 @stock.route('/<id>', methods=['PUT'])
-@login_required
+# @login_required
 def update_stock(id):
     body = request.get_json()
     update_query = models.Stock.update(**body).where(models.Stock.id==id)

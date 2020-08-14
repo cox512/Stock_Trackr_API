@@ -17,7 +17,7 @@ def get_one_watchlist(id):
 
 
 @watchlist.route('/', methods=['GET'])
-@login_required
+# @login_required
 def get_all_watchlists():
     print(current_user)
     try:
@@ -32,7 +32,7 @@ def get_all_watchlists():
         return jsonify(data={}, status={"code": 401, "message": "Error getting the resources"})
 
 @watchlist.route('/', methods=['POST'])
-@login_required
+# @login_required
 def create_watchlists():
     print(current_user)
     body = request.get_json()
@@ -46,7 +46,7 @@ def create_watchlists():
 
 #UPDATE ROUTE
 @watchlist.route('/<id>', methods=['PUT'])
-@login_required
+# @login_required
 def update_watchlist(id):
     body = request.get_json()
     update_query = models.Watchlist.update(**body).where(models.Watchlist.id==id)

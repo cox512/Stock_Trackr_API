@@ -29,11 +29,6 @@ app.secret_key = 'hoihnkoid'
 
 login_manager.init_app(app)
 
-# app.config.update(
-#     SESSION_COOKIE_SECURE=True,
-#     SESSION_COOKIE_SAMESITE='None',
-# )
-
 #This function is a similar concept to Middleware.
 @login_manager.user_loader
 def load_user(userid):
@@ -41,29 +36,6 @@ def load_user(userid):
         return models.User.get(models.User.id == userid)
     except models.DoesNotExist:
         return None
-
-#example from https://github.com/GoogleChromeLabs/samesite-examples/blob/master/python-flask.md
-# @app.route('/')
-# def hello_world():
-#     resp = make_response('Hello, World!')
-#     # Set a same-site cookie for first-party contexts
-#     # resp.set_cookie('cookie1', 'value1', samesite='Lax');
-#     # Set a cross-site cookie for third-party contexts
-#     resp.set_cookie('cookie1', 'value1', samesite='None', secure=True)
-
-#     # resp.set_cookie(samesite='None')
-#     return resp
-
-
-#DON'T FORGET TO ADD YOUR HEROKU SITE HERE
-CORS(user, origins=['http://localhost:3000', 'https://ten-bagger.herokuapp.com'], supports_credentials=True) #Sets the front-end url, support credentials allows cookies to be set to the server
-app.register_blueprint(user, url_prefix='/user') #Sets the handing instructions for our routes.
-
-CORS(stock, origins=['http://localhost:3000', 'https://ten-bagger.herokuapp.com'], supports_credentials=True)
-app.register_blueprint(stock, url_prefix='/api/v1/stocks')
-
-CORS(watchlist, origins=['http://localhost:3000', 'https://ten-bagger.herokuapp.com'], supports_credentials=True)
-app.register_blueprint(watchlist, url_prefix='/api/v1/watchlists')
 
 @app.before_request
 def before_request():
@@ -78,6 +50,16 @@ def after_request(response):
     print("you should see this after each request")
     g.db.close()
     return response
+
+#DON'T FORGET TO ADD YOUR HEROKU SITE HERE
+CORS(user, origins=['http://localhost:3000', 'https://ten-bagger.herokuapp.com'], supports_credentials=True) #Sets the front-end url, support credentials allows cookies to be set to the server
+app.register_blueprint(user, url_prefix='/user') #Sets the handing instructions for our routes.
+
+CORS(stock, origins=['http://localhost:3000', 'https://ten-bagger.herokuapp.com'], supports_credentials=True)
+app.register_blueprint(stock, url_prefix='/api/v1/stocks')
+
+CORS(watchlist, origins=['http://localhost:3000', 'https://ten-bagger.herokuapp.com'], supports_credentials=True)
+app.register_blueprint(watchlist, url_prefix='/api/v1/watchlists')
 
 if 'ON_HEROKU' in os.environ: 
     print('\non heroku!')
