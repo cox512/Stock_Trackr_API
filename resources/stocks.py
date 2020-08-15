@@ -25,7 +25,7 @@ def get_all_stocks():
         return jsonify(data={}, status={"code": 401, "message": "Error getting the resources"})
 
 @stock.route('/', methods=['POST'])
-# @login_required
+@login_required
 def create_stocks(): #Peewee's create() method
     body = request.get_json() #'request' is a global object that is getting the json from our data request.
     print("For Add Stock: ", body)
@@ -47,7 +47,7 @@ def get_one_stock(id):
 
 #UPDATE ROUTE
 @stock.route('/<id>', methods=['PUT'])
-# @login_required
+@login_required
 def update_stock(id):
     body = request.get_json()
     update_query = models.Stock.update(**body).where(models.Stock.id==id)

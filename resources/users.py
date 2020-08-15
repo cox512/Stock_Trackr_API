@@ -3,11 +3,8 @@ from flask import Blueprint, jsonify, request, session, make_response
 from flask_bcrypt import generate_password_hash, check_password_hash
 from playhouse.shortcuts import model_to_dict
 from flask_login import login_user, login_required, current_user, logout_user
-# from jinja import escape, Markup
-
 
 user = Blueprint('users', 'user', url_prefix='/user') #Defines our view functions.
-
 
 #GET route to check if a user is currently logged in.
 @user.route('/', methods=['GET'])
@@ -63,6 +60,7 @@ def login():
             # If correct. Log user in.
             login_user(user)
             print(current_user.username)
+            print(current_user.id)
 
                 #Sends the user data back from the database so you can use that info on the front side if needed.
             # del user_dict['password']
@@ -74,7 +72,7 @@ def login():
 
 #GET route to logout user
 @user.route('/logout', methods=['GET'])
-# @login_required
+@login_required
 def logout():
     logout_user()
     if current_user:
@@ -85,7 +83,7 @@ def logout():
 
 #UPDATE ROUTE
 @user.route('/<id>', methods=['PUT'])
-# @login_required
+@login_required
 def update_user(id):
     body = request.get_json()
     update_query = models.User.update(**body).where(models.User.id==id)

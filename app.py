@@ -17,10 +17,10 @@ PORT = 8000
 login_manager = LoginManager()
 app = Flask(__name__)
 
-app.config.update(
-    SESSION_COOKIE_SECURE=True,
-    SESSION_COOKIE_SAMESITE='None',
-)
+# app.config.update(
+#     SESSION_COOKIE_SECURE=True,
+#     SESSION_COOKIE_SAMESITE='None',
+# )
 
 #User Authentication
 app.secret_key = os.getenv('SECRET_KEY')

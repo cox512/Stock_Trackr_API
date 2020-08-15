@@ -32,7 +32,7 @@ def get_all_watchlists():
         return jsonify(data={}, status={"code": 401, "message": "Error getting the resources"})
 
 @watchlist.route('/', methods=['POST'])
-# @login_required
+@login_required
 def create_watchlists():
     print(current_user)
     body = request.get_json()
@@ -46,7 +46,7 @@ def create_watchlists():
 
 #UPDATE ROUTE
 @watchlist.route('/<id>', methods=['PUT'])
-# @login_required
+@login_required
 def update_watchlist(id):
     body = request.get_json()
     update_query = models.Watchlist.update(**body).where(models.Watchlist.id==id)
@@ -58,7 +58,7 @@ def update_watchlist(id):
 
 #DELETE ROUTE
 @watchlist.route('/<id>', methods=['DELETE'])
-# @login_required
+@login_required
 def delete_watchlist(id):
     #Always check to see what the query is returning. There were difficulties with this call because it was only referencing the object, not returning. "get" actually returns the object.
     watchlist_query = models.Watchlist.get(models.Watchlist.id==id).delete_instance(recursive=True)
