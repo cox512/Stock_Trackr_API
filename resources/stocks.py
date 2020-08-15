@@ -11,19 +11,6 @@ from flask_login import login_required, current_user
 
 stock = Blueprint('stocks', 'stock') #Check out the Flask docs for more info on these two "stocks", "stock" uses.
 
-@stock.route('/', methods=["GET"])
-# @login_required
-def get_all_stocks():
-    print(current_user)
-    try:
-        #stocks = [model_to_dict(stock) for stock in current_user.stock]
-        stocks = [model_to_dict(stock) for stock in models.Stock.select()]#Change the model class into a dictionary class, find all of the stock dicts (via 'select'). 
-        # print(stocks)
-        #Send those dicts back as a response.
-        return jsonify(data=stocks, status={"code": 200, "message": "Success"})
-    except models.DoesNotExist: #models.DoesNotExist is Flask specific error handling. It's thrown when the try does not work. It will throw a KeyError (which is the Python term).
-        return jsonify(data={}, status={"code": 401, "message": "Error getting the resources"})
-
 @stock.route('/', methods=['POST'])
 @login_required
 def create_stocks(): #Peewee's create() method
@@ -35,6 +22,27 @@ def create_stocks(): #Peewee's create() method
     print(model_to_dict(new_stock), 'model to dict')
     stock_dict = model_to_dict(new_stock)
     return jsonify(data=stock_dict, status={'code': 200, 'message': "Success"})
+
+@stock.route('/showList', methods=["POST"])
+@login_required
+def get_all_stocks():
+    print(current_user)
+    try:
+        body = request.get_json()
+        print("watchlist ID: ", body)
+        #stocks = [model_to_dict(stock) for stock in current_user.stock]
+        # stocks = [model_to_dict(stock) for stock in models.Stock.select()]
+        #Filter gets many items, 'get' just gets the first one.
+        all_stocks = models.Stock.filter(watchlist=body["watchlist"])
+        print(all_stocks)
+        stocks = [model_to_dict(stock) for stock in all_stocks]
+        #Change the model class into a dictionary class, find all of the stock dicts (via 'select'). 
+        #Send those dicts back as a response.
+        return jsonify(data=stocks, status={"code": 200, "message": "Success"})
+    except models.DoesNotExist: #models.DoesNotExist is Flask specific error handling. It's thrown when the try does not work. It will throw a KeyError (which is the Python term).
+        return jsonify(data={}, status={"code": 401, "message": "Error getting the resources"})
+
+
 
 #SHOW route
 @stock.route('/<id>', methods=['GET'])
