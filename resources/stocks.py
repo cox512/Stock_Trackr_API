@@ -68,6 +68,8 @@ def update_stock(id):
 #DELETE ROUTE
 @stock.route('/<id>', methods=['DELETE'])
 def delete_stock(id):
-    stock_query = models.Stock.delete().where(models.Stock.id==id)
-    stock_query.execute()
+    print(id)
+    stock_query = models.Stock.get(models.Stock.id==id).delete_instance()
+    print(models.Stock.get(models.Stock.watchlist))
+    # stock_query.execute()
     return jsonify(data={}, success={"code": 200, "message": "Stock successfully deleted"})
