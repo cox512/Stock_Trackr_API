@@ -42,8 +42,6 @@ def get_all_stocks():
     except models.DoesNotExist: #models.DoesNotExist is Flask specific error handling. It's thrown when the try does not work. It will throw a KeyError (which is the Python term).
         return jsonify(data={}, status={"code": 401, "message": "Error getting the resources"})
 
-
-
 #SHOW route
 @stock.route('/<id>', methods=['GET'])
 def get_one_stock(id):

@@ -3,6 +3,8 @@ from flask import Blueprint, jsonify, request, session, make_response
 from flask_bcrypt import generate_password_hash, check_password_hash
 from playhouse.shortcuts import model_to_dict
 from flask_login import login_user, login_required, current_user, logout_user
+from datetime import date
+
 
 user = Blueprint('users', 'user', url_prefix='/user') #Defines our view functions.
 
@@ -67,7 +69,7 @@ def login():
             return jsonify(data=user_dict, logged_in=True, status={'code': 200, 'message': 'Success'})
         else:
             return jsonify(data={}, status={'code': 401, 'message': 'Incorrect password'})
-    except models.DoesNotExist:
+    except models.User.DoesNotExist:
         return jsonify(data={}, status={'code': 401, 'message': 'User does not exist'})
 
 #GET route to logout user
@@ -93,11 +95,12 @@ def update_user(id):
     update_user=models.User.get_by_id(id)
     return jsonify(data=model_to_dict(update_user), status={"code": 200, "status": "User successfully updated."})
 
-#DELETE USER ROUTE
+#DELETE USER ROUTE 
 @user.route('/<id>', methods=['DELETE'])
+@login_required
 def delete_user(id):
-    user_query = models.User.delete().where(models.User.id==id)
-    user_query.execute()
+    print(id)
+    user_query = models.User.get(models.User.id==id).delete_instance(recursive=True)
     return jsonify(data={}, success={"code": 200, "message": "User successfully deleted"})
 
 

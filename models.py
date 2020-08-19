@@ -14,8 +14,7 @@ class User(UserMixin, Model):
     lname = CharField()
     username = CharField(unique=True) #this will change to ForeignKeyField() I believe
     password = CharField()
-    email = CharField(unique=True)
-    #watchlists = ForeignKeyField() #I think this is what I have to do in order to get this to reference my watchlists. 
+    email = CharField(unique=True) 
     created_at = DateTimeField(default=datetime.datetime.now)
 
     class Meta:
@@ -23,7 +22,7 @@ class User(UserMixin, Model):
 
 class Watchlist(Model): 
     title = CharField()
-    user = ForeignKeyField(User, backref='watchlists') #A way of associating a user with a watchlist. "user-one.watchlists" should give us all the watchlists associated with that user id.
+    user = ForeignKeyField(User, on_delete="CASCADE",backref='watchlists') #A way of associating a user with a watchlist. "user-one.watchlists" should give us all the watchlists associated with that user id.
     created_at = DateTimeField(default=datetime.datetime.now)
     
     class Meta:

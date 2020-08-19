@@ -62,6 +62,4 @@ def update_watchlist(id):
 def delete_watchlist(id):
     #Always check to see what the query is returning. There were difficulties with this call because it was only referencing the object, not returning. "get" actually returns the object.
     watchlist_query = models.Watchlist.get(models.Watchlist.id==id).delete_instance(recursive=True)
-    # watchlist_query = models.Watchlist.delete_instance(recursive=True).where(models.Watchlist.id==id)
-    # watchlist_query.execute()
     return jsonify(data={}, success={"code": 200, "message": "Watchlist successfully deleted"})
