@@ -17,15 +17,19 @@ PORT = 8000
 login_manager = LoginManager()
 app = Flask(__name__)
 
-# app.config.update(
-#     SESSION_COOKIE_SECURE=True,
-#     SESSION_COOKIE_SAMESITE='None',
-# )
+# FROM VIDEO
+app.config['SECRET_KEY'] = '02ja22co79b'
+
+app.config.update(
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SAMESITE='None',
+)
+
 
 #User Authentication
-app.secret_key = os.getenv('SECRET_KEY')
+# app.secret_key = os.getenv('SECRET_KEY')
 # connect(os.environ.get('DATABASE_URL'))
-app.secret_key = 'hoihnkoid'
+# app.secret_key = 'hoihnkoid'
 
 login_manager.init_app(app)
 
@@ -37,9 +41,8 @@ def load_user(userid):
     except models.DoesNotExist:
         return None
 
-#DON'T FORGET TO ADD YOUR HEROKU SITE HERE
 CORS(user, origins=['http://localhost:3000', 'https://ten-bagger.herokuapp.com'], supports_credentials=True) #Sets the front-end url, support credentials allows cookies to be set to the server
-app.register_blueprint(user, url_prefix='/user') #Sets the handing instructions for our routes.
+app.register_blueprint(user, url_prefix='/user') #Sets the handling instructions for our routes.
 
 CORS(stock, origins=['http://localhost:3000', 'https://ten-bagger.herokuapp.com'], supports_credentials=True)
 app.register_blueprint(stock, url_prefix='/api/v1/stocks')
@@ -51,7 +54,7 @@ app.register_blueprint(watchlist, url_prefix='/api/v1/watchlists')
 def before_request():
     """Connect to the db before each request"""
     print("you should see this before each request")
-    g.db = models.DATABASE #Sets the db variable to equal our models Database.
+    g.db = models.DATABASE #Sets the db variable to equal our model's Database.
     g.db.connect()#Connects app.py to models.py database
 
 @app.after_request #Closes the connection and returns the response

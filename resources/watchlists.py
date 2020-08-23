@@ -3,12 +3,14 @@ from flask import Blueprint, jsonify, request
 from playhouse.shortcuts import model_to_dict
 from flask_login import login_required, current_user
 from datetime import date
+from resources.users import token_required
 
 watchlist = Blueprint('watchlists', 'watchlist')
 
 #SHOW route
 @watchlist.route('/<id>', methods=['GET'])
-def get_one_watchlist(id):
+@token_required
+def get_one_watchlist(current_user, id):
     print(id, 'watchlist id')
     watchlist = models.Watchlist.get_by_id(id)
     watchlist_dict = model_to_dict(watchlist)
@@ -18,7 +20,8 @@ def get_one_watchlist(id):
 
 @watchlist.route('/', methods=['GET'])
 # @login_required
-def get_all_watchlists():
+@token_required
+def get_all_watchlists(current_user):
     print(current_user)
     try:
         # print(watchlist)
@@ -32,8 +35,9 @@ def get_all_watchlists():
         return jsonify(data={}, status={"code": 401, "message": "Error getting the resources"})
 
 @watchlist.route('/', methods=['POST'])
-@login_required
-def create_watchlists():
+# @login_required
+@token_required
+def create_watchlists(current_user):
     print(current_user)
     body = request.get_json()
     print(body)
@@ -46,8 +50,9 @@ def create_watchlists():
 
 #UPDATE ROUTE
 @watchlist.route('/<id>', methods=['PUT'])
-@login_required
-def update_watchlist(id):
+# @login_required
+@token_required
+def update_watchlist(current_user, id):
     body = request.get_json()
     update_query = models.Watchlist.update(**body).where(models.Watchlist.id==id)
     #Always have to perform 'execute' on an update because of the method we're using with the database.
@@ -58,8 +63,9 @@ def update_watchlist(id):
 
 #DELETE ROUTE
 @watchlist.route('/<id>', methods=['DELETE'])
-@login_required
-def delete_watchlist(id):
+# @login_required
+@token_required
+def delete_watchlist(current_user, id):
     #Always check to see what the query is returning. There were difficulties with this call because it was only referencing the object, not returning. "get" actually returns the object.
     watchlist_query = models.Watchlist.get(models.Watchlist.id==id).delete_instance(recursive=True)
     return jsonify(data={}, success={"code": 200, "message": "Watchlist successfully deleted"})

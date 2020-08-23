@@ -10,6 +10,8 @@ else:
     DATABASE = SqliteDatabase('baggr.sqlite', pragmas={'foreign_keys': 1}) #Creates our SQLite database. Enforcing foreign_key restraints.
 
 class User(UserMixin, Model):
+    #EVENTUALLY YOU SHOULD CREATE A PUBLIC_ID FOR THE USERS, SO IT'S NOT AN EASY SEQUENTIAL GUESS
+    #ADD AN OPTION "ADMIN" KEY TO DENOTE IF A USER IS AN ADMIN OR NOT. THIS COULD COME IN HANDY FOR THE TEMPLATE WEBSITE AS WELL. THE USER CAN TEST OUT THE FORMS WITHOUT THEM BEING SAVED TO THE ACTUAL SITE UNLESS THEY HAVE ADMIN PRIVELEDGES.
     fname = CharField()
     lname = CharField()
     username = CharField(unique=True) #this will change to ForeignKeyField() I believe

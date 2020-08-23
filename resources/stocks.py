@@ -8,12 +8,15 @@ load_dotenv()
 from flask import Blueprint, jsonify, request
 from playhouse.shortcuts import model_to_dict
 from flask_login import login_required, current_user
+from resources.users import token_required
+
 
 stock = Blueprint('stocks', 'stock') #Check out the Flask docs for more info on these two "stocks", "stock" uses.
 
 @stock.route('/', methods=['POST'])
-@login_required
-def create_stocks(): #Peewee's create() method
+# @login_required
+@token_required
+def create_stocks(current_user): #Peewee's create() method
     body = request.get_json() #'request' is a global object that is getting the json from our data request.
     print("For Add Stock: ", body)
     new_stock = models.Stock.create(ticker=body[0], watchlist=body[1])
@@ -24,8 +27,9 @@ def create_stocks(): #Peewee's create() method
     return jsonify(data=stock_dict, status={'code': 200, 'message': "Success"})
 
 @stock.route('/showList', methods=["POST"])
-@login_required
-def get_all_stocks():
+# @login_required
+@token_required
+def get_all_stocks(current_user):
     print(current_user)
     try:
         body = request.get_json()
@@ -44,7 +48,9 @@ def get_all_stocks():
 
 #SHOW route
 @stock.route('/<id>', methods=['GET'])
-def get_one_stock(id):
+@token_required
+# @login_required
+def get_one_stock(current_user, id):
     print(id, 'stock id')
     stock = models.Stock.get_by_id(id)
     stock_dict = model_to_dict(stock)
@@ -53,8 +59,9 @@ def get_one_stock(id):
 
 #UPDATE ROUTE
 @stock.route('/<id>', methods=['PUT'])
-@login_required
-def update_stock(id):
+# @login_required
+@token_required
+def update_stock(current_user, id):
     body = request.get_json()
     update_query = models.Stock.update(**body).where(models.Stock.id==id)
     #Always have to perform 'execute' on an update because of the method we're using with the database.
@@ -65,7 +72,8 @@ def update_stock(id):
 
 #DELETE ROUTE
 @stock.route('/<id>', methods=['DELETE'])
-def delete_stock(id):
+@token_required
+def delete_stock(current_user, id):
     print(id)
     stock_query = models.Stock.get(models.Stock.id==id).delete_instance()
     print(models.Stock.get(models.Stock.watchlist))
