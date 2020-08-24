@@ -16,14 +16,17 @@ user = Blueprint('users', 'user', url_prefix='/user') #Defines our view function
 
 app = Flask(__name__)
 # FROM VIDEO
-# app.config['SECRET_KEY'] = '02ja22co79b'
+app.config['SECRET_KEY'] = '02ja22co79b'
 
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+        print('in token_required')
+        
         token = None
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
+        if 'Authorization' in request.headers:
+            token = request.headers['Authorization']
+            print("token:", token)
         if not token:
             return jsonify({'message' : 'token is missing'}), 401
         try:
@@ -37,6 +40,7 @@ def token_required(f):
             return jsonify({'message': 'Token is invalid'}), 401
         return f(current_user, *args, **kwargs)
     
+    print("Got to the end of token-required")
     return decorated
 
 #GET route to check if a user is currently logged in.
@@ -87,10 +91,10 @@ def get_one_user(current_user, id):
 def login():
     #Use for JWT authorization
     auth = request.authorization
+    print(auth)
     body = request.get_json()
     print(body)
     body['username'] = body['username'].lower()
-
     try:
         #find the user by username
         user = models.User.get(models.User.username == body['username'])
@@ -100,16 +104,11 @@ def login():
             # If correct. Log user in.
             login_user(user)
             print(current_user.username)
-            print(current_user.id)
             #Create a JSON token for the user
-        # if check_password_hash(user.password, auth.password):
             token = jwt.encode({'id': user.id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
             del user_dict['password']
+             #Sends the user data back from the database so you can use that info on the front side if needed.
             return jsonify(data=user_dict, logged_in=True, status={'code': 200, 'message': 'Success', 'token': token.decode('UTF-8')})
-
-                #Sends the user data back from the database so you can use that info on the front side if needed.
-            # del user_dict['password']
-            # return jsonify(data=user_dict, logged_in=True, status={'code': 200, 'message': 'Success'})
         else:
             return jsonify(data={}, status={'code': 401, 'message': 'Incorrect password'})
     except models.User.DoesNotExist:
