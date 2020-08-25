@@ -1,5 +1,5 @@
 import models
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 from playhouse.shortcuts import model_to_dict
 from flask_login import login_required, current_user
 from datetime import date
@@ -22,7 +22,8 @@ def get_one_watchlist(current_user, id):
 # @login_required
 @token_required
 def get_all_watchlists(current_user):
-    print(current_user)
+    print('GET all Watchlists')
+    print(current_user.id)
     try:
         # print(watchlist)
         #Filter gets many items, 'get' just gets the first one.
@@ -38,10 +39,9 @@ def get_all_watchlists(current_user):
 # @login_required
 @token_required
 def create_watchlists(current_user):
-    print(current_user)
+    print('current user:', current_user)
     body = request.get_json()
     print(body)
-
     # new_watchlist = models.Watchlist.create(**body)
     new_watchlist = models.Watchlist.create(title=body, user=current_user.id, created_at=date.today())
     # print(model_to_dict(new_watchlist))
@@ -66,6 +66,9 @@ def update_watchlist(current_user, id):
 # @login_required
 @token_required
 def delete_watchlist(current_user, id):
+    body = id
+    print(body)
     #Always check to see what the query is returning. There were difficulties with this call because it was only referencing the object, not returning. "get" actually returns the object.
-    watchlist_query = models.Watchlist.get(models.Watchlist.id==id).delete_instance(recursive=True)
+    print(models.Watchlist.get(models.Watchlist.id==body))
+    watchlist_query = models.Watchlist.get(models.Watchlist.id==body).delete_instance(recursive=True)
     return jsonify(data={}, success={"code": 200, "message": "Watchlist successfully deleted"})
