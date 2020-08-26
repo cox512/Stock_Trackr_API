@@ -19,7 +19,7 @@ stock = Blueprint('stocks', 'stock') #Check out the Flask docs for more info on 
 def create_stocks(current_user): #Peewee's create() method
     body = request.get_json() #'request' is a global object that is getting the json from our data request.
     print("For Add Stock: ", body)
-    new_stock = models.Stock.create(ticker=body[0], watchlist=body[1])
+    new_stock = models.Stock.create(ticker=body["symbol"], watchlist=body["id"])
     # new_stock = models.Stock.create(ticker=body["ticker"], watchlist=body["watchlist"])
 
     print(model_to_dict(new_stock), 'model to dict')
@@ -75,7 +75,8 @@ def update_stock(current_user, id):
 @token_required
 def delete_stock(current_user, id):
     print(id)
+    print("models.Stock.id", models.Stock.get(models.Stock.id))
     stock_query = models.Stock.get(models.Stock.id==id).delete_instance()
-    print(models.Stock.get(models.Stock.watchlist))
+    # print(models.Stock.get(models.Stock.watchlist))
     # stock_query.execute()
     return jsonify(data={}, success={"code": 200, "message": "Stock successfully deleted"})
