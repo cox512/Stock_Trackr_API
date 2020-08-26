@@ -59,7 +59,10 @@ def logged_in(current_user):
 #POST route to register /register
 @user.route('/register', methods=["POST"])
 def create_user():
+    auth = request.authorization
+    print(auth)
     body = request.get_json()
+    print(body)
     body['username'] = body['username'].lower()
     try: #Looking for user by username address. If there isn't one, then we move to exception.
         models.User.get(models.User.username == body['username'])
@@ -69,9 +72,12 @@ def create_user():
         user = models.User.create(**body)
         login_user(user)
         user_dict = model_to_dict(user)
+        print(user_dict['id'])
+        token = jwt.encode({'id': user_dict['id'], 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
+        print(token)
         #remove the password from returned data
         del user_dict['password']
-        return jsonify(data=user_dict, logged_in=True, status={'code': 200, 'message': "Success"})
+        return jsonify(data=user_dict, logged_in=True, status={'code': 200, 'message': "Success", 'token': token.decode('UTF-8')})
 
 #SHOW route
 @user.route('/<id>', methods=['GET'])
