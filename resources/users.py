@@ -97,6 +97,7 @@ def login():
         user = models.User.get(models.User.username == body['username'])
         #if username found, check the password
         user_dict = model_to_dict(user)
+        print(user_dict)
         if check_password_hash(user_dict['password'], body['password']):
             # If correct. Log user in.
             login_user(user)
@@ -140,7 +141,7 @@ def update_user(current_user, id):
 @user.route('/<id>', methods=['DELETE'])
 @token_required
 # @login_required
-def delete_user(current_user,id):
+def delete_user(current_user, id):
     print(id)
     user_query = models.User.get(models.User.id==id).delete_instance(recursive=True)
     return jsonify(data={}, success={"code": 200, "message": "User successfully deleted"})
