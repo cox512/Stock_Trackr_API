@@ -18,6 +18,7 @@ app.config['SECRET_KEY'] = '02ja22co79b'
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+        print('f:', f)
         print('in token_required')
         # print(*args, **kwargs)
         token = None
@@ -42,19 +43,15 @@ def token_required(f):
 
 #GET route to check if a user is currently logged in.
 @user.route('/', methods=['GET'])
-# @token_required
+@token_required
 # @login_required
 def logged_in(current_user):
     # print(model_to_dict(current_user))
     print(current_user)
-    # try:
     if current_user:
         user = [model_to_dict(current_user)]
         return jsonify(data=user, logged_in=True, status={"code": 200, "message": "Success"})
     return "You are not logged in"
-
-    # except models.DoesNotExist:
-    #     return jsonify(data={}, status={"code": 401, "message": "Error getting the current user"})
 
 #POST route to register /register
 @user.route('/register', methods=["POST"])
@@ -129,6 +126,8 @@ def logout(current_user):
 # @login_required
 @token_required
 def update_user(current_user, id):
+# def update_user(id):
+    print("put route current_user:", current_user)
     body = request.get_json()
     update_query = models.User.update(**body).where(models.User.id==id)
     #Always have to perform 'execute' on an update because of the method we're using with the database.
