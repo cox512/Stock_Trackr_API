@@ -74,12 +74,7 @@ def update_stock(current_user, id):
 @stock.route('/<id>', methods=['DELETE'])
 @token_required
 def delete_stock(current_user, id):
-<<<<<<< HEAD
     print(current_user.id)
-=======
-    print(id)
-    print("models.Stock.id", models.Stock.get(models.Stock.id))
->>>>>>> master
     stock_query = models.Stock.get(models.Stock.id==id).delete_instance()
     # print(models.Stock.get(models.Stock.watchlist))
     # stock_query.execute()
