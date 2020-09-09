@@ -31,6 +31,7 @@ def get_all_watchlists(current_user):
         print(all_watchlists)
         # breakpoint()
         watchlists = [model_to_dict(watchlist) for watchlist in all_watchlists]
+        print(watchlist)
         return jsonify(data=watchlists, status={"code": 200, "message": "Success"})
     except models.DoesNotExist:
         return jsonify(data={}, status={"code": 401, "message": "Error getting the resources"})
