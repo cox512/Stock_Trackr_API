@@ -32,10 +32,8 @@ def token_required(f):
             print("data:", data)
             current_user= models.User.filter(id=data['id']).first()
             print("current_user:", current_user)
-            # return jsonify({'message': 'current-user is valid'})
         except:
             return jsonify({'message': 'Token is invalid'}), 401
-        # print(f(current_user, *args, **kwargs))
         return f(current_user, *args, **kwargs)
     
     # print("Got to the end of token-required")
@@ -57,9 +55,9 @@ def logged_in(current_user):
 @user.route('/register', methods=["POST"])
 def create_user():
     auth = request.authorization
-    print(auth)
+    print("auth:", auth)
     body = request.get_json()
-    print(body)
+    print("body: ", body)
     body['username'] = body['username'].lower()
     try: #Looking for user by username address. If there isn't one, then we move to exception.
         models.User.get(models.User.username == body['username'])
@@ -90,17 +88,18 @@ def get_one_user(current_user, id):
 @user.route('/login', methods=['POST'])
 def login():
     #Use for JWT authorization
+    print('login route')
     auth = request.authorization
     print(auth)
     body = request.get_json()
-    print(body)
+    print("body:", body)
     body['username'] = body['username'].lower()
     try:
         #find the user by username
         user = models.User.get(models.User.username == body['username'])
         #if username found, check the password
         user_dict = model_to_dict(user)
-        print(user_dict)
+        print("user_dict:", user_dict)
         if check_password_hash(user_dict['password'], body['password']):
             # If correct. Log user in.
             login_user(user)
@@ -120,6 +119,7 @@ def login():
 @token_required
 # @login_required
 def logout(current_user):
+    print("current_user: ", current_user)
     logout_user()
     if current_user:
         print("2nd console: ", current_user)
