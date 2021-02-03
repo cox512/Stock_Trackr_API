@@ -3,13 +3,13 @@ from flask import Blueprint, jsonify, request, make_response
 from playhouse.shortcuts import model_to_dict
 from flask_login import login_required, current_user
 from datetime import date
-from resources.users import token_required
+# from resources.users import token_required
 
 watchlist = Blueprint('watchlists', 'watchlist')
 
 #SHOW route
 @watchlist.route('/<id>', methods=['GET'])
-@token_required
+# @token_required
 def get_one_watchlist(current_user, id):
     print(id, 'watchlist id')
     watchlist = models.Watchlist.get_by_id(id)
@@ -20,7 +20,7 @@ def get_one_watchlist(current_user, id):
 
 @watchlist.route('/', methods=['GET'])
 # @login_required
-@token_required
+# @token_required
 def get_all_watchlists(current_user):
     print('GET all Watchlists')
     print(current_user.id)
@@ -38,7 +38,7 @@ def get_all_watchlists(current_user):
 
 @watchlist.route('/', methods=['POST'])
 # @login_required
-@token_required
+# @token_required
 def create_watchlists(current_user):
     print('current user:', current_user)
     body = request.get_json()
@@ -52,7 +52,7 @@ def create_watchlists(current_user):
 #UPDATE ROUTE
 @watchlist.route('/<id>', methods=['PUT'])
 # @login_required
-@token_required
+# @token_required
 def update_watchlist(current_user, id):
     body = request.get_json()
     update_query = models.Watchlist.update(**body).where(models.Watchlist.id==id)
@@ -65,7 +65,7 @@ def update_watchlist(current_user, id):
 #DELETE ROUTE
 @watchlist.route('/<id>', methods=['DELETE'])
 # @login_required
-@token_required
+# @token_required
 def delete_watchlist(current_user, id):
     body = id
     print(body)

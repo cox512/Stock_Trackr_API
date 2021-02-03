@@ -1,48 +1,49 @@
 import os
-from flask import Flask, g, jsonify, session, redirect, url_for, request, make_response
+from flask import Flask, g, session, redirect, url_for, request, make_response
 from flask_cors import CORS, cross_origin
 from flask_login import LoginManager
 from dotenv import load_dotenv
-load_dotenv()
 import models
-from resources.users import user #import the user, stock, and watchlist resources from users.py
+
+#import the user, stock, and watchlist resources from users.py
+from resources.users import user 
 from resources.stocks import stock
 from resources.watchlists import watchlist
+
 from playhouse.db_url import connect
 # from markupsafe import escape
+
+load_dotenv()
 
 DEBUG = True #Allows error messages to be printed out in the server.
 PORT = 8000
 
 login_manager = LoginManager()
+
 app = Flask(__name__)
 
-# FROM VIDEO
-app.config['SECRET_KEY'] = '02ja22co79b'
+app.secret_key = os.getenv('SECRET_KEY')
 
 app.config.update(
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_SAMESITE='None',
 )
-
-
-#User Authentication
-# app.secret_key = os.getenv('SECRET_KEY')
-# connect(os.environ.get('DATABASE_URL'))
-# app.secret_key = 'hoihnkoid'
-
 login_manager.init_app(app)
+
 
 #This function is a similar concept to Middleware.
 @login_manager.user_loader
-def load_user(userid):
+def load_user(user_id):
+    print("print")
+    print("userid:", user_id)
     try:
-        return models.User.get(models.User.id == userid)
+        print("userid:", user_id)
+        return models.User.get(models.User.id == user_id)
     except models.DoesNotExist:
         return None
 
 CORS(user, origins=['http://localhost:3000', 'https://ten-bagger.herokuapp.com'], supports_credentials=True) #Sets the front-end url, support credentials allows cookies to be set to the server
-app.register_blueprint(user, url_prefix='/user') #Sets the handling instructions for our routes.
+app.register_blueprint(user, url_prefix='/users') #Sets the handling instructions for our routes.
 
 CORS(stock, origins=['http://localhost:3000', 'https://ten-bagger.herokuapp.com'], supports_credentials=True)
 app.register_blueprint(stock, url_prefix='/api/v1/stocks')
@@ -59,7 +60,7 @@ def before_request():
 
 @app.after_request #Closes the connection and returns the response
 def after_request(response):
-    """Close the db connetion after each request"""
+    """Close the db connection after each request"""
     print("you should see this after each request")
     g.db.close()
     return response

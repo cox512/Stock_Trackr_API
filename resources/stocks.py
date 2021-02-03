@@ -1,21 +1,19 @@
 import models
 import random
-import pandas as pd
-from alpha_vantage.timeseries import TimeSeries
 import time
 from dotenv import load_dotenv
 load_dotenv()
 from flask import Blueprint, jsonify, request
 from playhouse.shortcuts import model_to_dict
 from flask_login import login_required, current_user
-from resources.users import token_required
+# from resources.users import token_required
 
 
 stock = Blueprint('stocks', 'stock') #Check out the Flask docs for more info on these two "stocks", "stock" uses.
 
 @stock.route('/', methods=['POST'])
 # @login_required
-@token_required
+# @token_required
 def create_stocks(current_user): #Peewee's create() method
     body = request.get_json() #'request' is a global object that is getting the json from our data request.
     print("For Add Stock: ", body)
@@ -28,7 +26,7 @@ def create_stocks(current_user): #Peewee's create() method
 
 @stock.route('/showList', methods=["POST"])
 # @login_required
-@token_required
+# @token_required
 def get_all_stocks(current_user):
     print(current_user)
     try:
@@ -48,7 +46,7 @@ def get_all_stocks(current_user):
 
 #SHOW route
 @stock.route('/<id>', methods=['GET'])
-@token_required
+# @token_required
 # @login_required
 def get_one_stock(current_user, id):
     print(id, 'stock id')
@@ -60,7 +58,7 @@ def get_one_stock(current_user, id):
 #UPDATE ROUTE
 @stock.route('/<id>', methods=['PUT'])
 # @login_required
-@token_required
+# @token_required
 def update_stock(current_user, id):
     body = request.get_json()
     update_query = models.Stock.update(**body).where(models.Stock.id==id)
@@ -72,7 +70,7 @@ def update_stock(current_user, id):
 
 #DELETE ROUTE
 @stock.route('/<id>', methods=['DELETE'])
-@token_required
+# @token_required
 def delete_stock(current_user, id):
     print(current_user.id)
     stock_query = models.Stock.get(models.Stock.id==id).delete_instance()
