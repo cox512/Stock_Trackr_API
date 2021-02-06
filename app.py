@@ -1,15 +1,13 @@
 import os
 from flask import Flask, g, session, redirect, url_for, request, make_response
 from flask_cors import CORS, cross_origin
-from flask_login import LoginManager
+from flask_login import LoginManager, UserMixin
 from dotenv import load_dotenv
 import models
 
-#import the user, stock, and watchlist resources from users.py
 from resources.users import user 
 from resources.stocks import stock
 from resources.watchlists import watchlist
-
 from playhouse.db_url import connect
 # from markupsafe import escape
 
@@ -19,25 +17,22 @@ DEBUG = True #Allows error messages to be printed out in the server.
 PORT = 8000
 
 login_manager = LoginManager()
-
 app = Flask(__name__)
-
 app.secret_key = os.getenv('SECRET_KEY')
 
 app.config.update(
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_SAMESITE='None',
 )
+
 login_manager.init_app(app)
 
-
-#This function is a similar concept to Middleware.
 @login_manager.user_loader
 def load_user(user_id):
-    print("print")
     print("userid:", user_id)
+    # return models.User.query.get(int(user_id))
     try:
-        print("userid:", user_id)
+        #add "query"
         return models.User.get(models.User.id == user_id)
     except models.DoesNotExist:
         return None

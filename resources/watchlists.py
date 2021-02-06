@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, request, make_response
 from playhouse.shortcuts import model_to_dict
 from flask_login import login_required, current_user
 from datetime import date
-# from resources.users import token_required
+from resources.users import token_required
 
 watchlist = Blueprint('watchlists', 'watchlist')
 
@@ -38,14 +38,15 @@ def get_all_watchlists(current_user):
 
 @watchlist.route('/', methods=['POST'])
 # @login_required
-# @token_required
+@token_required
 def create_watchlists(current_user):
-    print('current user:', current_user)
+    print('create_watchlist current user:', current_user.id)
     body = request.get_json()
     print(body)
     # new_watchlist = models.Watchlist.create(**body)
-    new_watchlist = models.Watchlist.create(title=body, user=current_user.id, created_at=date.today())
-    # print(model_to_dict(new_watchlist))
+    new_watchlist = models.Watchlist.create(title=body['title'], user=current_user.id, created_at=date.today())
+    # new_watchlist = models.Watchlist.create(title=body, user=36, created_at=date.today())
+    print("watchlist dict:", model_to_dict(new_watchlist))
     watchlist_dict = model_to_dict(new_watchlist)
     return jsonify(data=watchlist_dict, status={'code': 200, "messsage": "Success"})
 

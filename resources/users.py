@@ -3,20 +3,18 @@ import models
 from flask import Flask, Blueprint, jsonify, request, session, make_response
 from flask_bcrypt import generate_password_hash, check_password_hash
 from playhouse.shortcuts import model_to_dict
-from flask_login import login_user, login_required, current_user, logout_user, LoginManager
-# from datetime import date
+from flask_login import login_user, login_required, current_user, logout_user
 import jwt 
 import datetime
 from functools import wraps
 
-
 user = Blueprint('users', 'user', url_prefix='/users') #Defines our view functions.
 
-login_manager = LoginManager()
+# login_manager = LoginManager()
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
-app.secret_key = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 def token_required(f):
     @wraps(f)
@@ -30,7 +28,7 @@ def token_required(f):
             return jsonify({'message' : 'token is missing'}), 401
         try:
             print("trying")
-            data = jwt.decode(token, app.secret_key, algorithms=["HS256"])
+            data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
             print("data:", data)
             current_user= models.User.filter(id=data['id']).first()
             print("current_user:", current_user)
@@ -44,12 +42,13 @@ def token_required(f):
 
 #GET route to check if a user is currently logged in.
 @user.route('/', methods=['GET'])
-# @token_required
 # @login_required
-def logged_in(current_user):
+def logged_in():
     # print(model_to_dict(current_user))
-    print(current_user)
-    if current_user:
+    # user = models.User.query.filter_by(id=1).first()
+    if current_user.is_authenticated:
+        print("current_user:", current_user.username)
+        # return "Found a user"
         user = [model_to_dict(current_user)]
         return jsonify(data=user, logged_in=True, status={"code": 200, "message": "Success"})
     return "You are not logged in"
@@ -70,7 +69,7 @@ def create_user():
         user_dict = model_to_dict(user)
         print(user_dict['id'])
 
-        token = jwt.encode({'id': user_dict['id'], 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.secret_key)
+        token = jwt.encode({'id': user_dict['id'], 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, SECRET_KEY)
         
         user_dict['token'] = token
         del user_dict['password']
@@ -90,25 +89,18 @@ def get_one_user(current_user, id):
 #Login route 
 @user.route('/login', methods=['POST'])
 def login():
-    print('login route')
     body = request.get_json()
-    print("body:", body)
     body['username'] = body['username'].lower()
     try:
         user = models.User.get(models.User.username == body['username'])
-
         user_dict = model_to_dict(user)
-        print("user_dict:", user_dict)
         if check_password_hash(user_dict['password'], body['password']):
-            login_user(user)
-            print("user:", user)
+            login_user(user, remember=True)
 
-            token = jwt.encode({'id': user_dict['id'], 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.secret_key)
+            token = jwt.encode({'id': user_dict['id'], 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, SECRET_KEY)
             
             user_dict['token'] = token
             del user_dict['password']
-            # print("user_dict:", user_dict)
-
             return jsonify(data=user_dict, logged_in=True, status={'code': 200, 'message': 'Success'}) 
         else:
             return jsonify(data={}, status={'code': 401, 'message': 'Incorrect password'})
@@ -116,12 +108,10 @@ def login():
         return jsonify(data={}, status={'code': 401, 'message': 'User does not exist'})
 
 #GET route to logout user
-@user.route('/logout/<id>', methods=['GET'])
-@token_required
-def logout(current_user):
-    print("current_user:", current_user)
+@user.route('/logout', methods=['GET'])
+# @login_required
+def logout():
     logout_user()
-
     return jsonify(data={}, status={'code': 200, 'message': 'Successful Logout'})
 
 #UPDATE ROUTE
@@ -133,7 +123,7 @@ def update_user(current_user):
     update_query = models.User.update(**body).where(models.User.id==current_user)
     #Always have to perform 'execute' on an update because of the method we're using with the database.
     update_query.execute()
-    #After sending the query and executing it, we need to return the updated value back to the client.
+    
     update_user=models.User.get_by_id(current_user)
     return jsonify(data=model_to_dict(update_user), status={"code": 200, "status": "User successfully updated."})
 
@@ -143,6 +133,7 @@ def update_user(current_user):
 def delete_user(current_user):
     print("delete user:", current_user)
     user_query = models.User.get(models.User.id==current_user).delete_instance(recursive=True)
+    logout_user()
     return jsonify(data={}, success={"code": 200, "message": "User successfully deleted"})
 
 
