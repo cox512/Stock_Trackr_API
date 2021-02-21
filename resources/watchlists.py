@@ -1,7 +1,7 @@
 import models
-from flask import Blueprint, jsonify, request, make_response
+from flask import Blueprint, jsonify, request, make_response, session
 from playhouse.shortcuts import model_to_dict
-from flask_login import login_required, current_user
+from flask_login import login_required
 from datetime import date
 from resources.users import token_required
 
@@ -9,29 +9,25 @@ watchlist = Blueprint('watchlists', 'watchlist')
 
 #SHOW route
 @watchlist.route('/<id>', methods=['GET'])
-# @token_required
+@token_required
 def get_one_watchlist(current_user, id):
     print(id, 'watchlist id')
     watchlist = models.Watchlist.get_by_id(id)
     watchlist_dict = model_to_dict(watchlist)
-    # print(watchlist_dict)
+    print(watchlist_dict)
     return jsonify(data=watchlist_dict, status={"code": 200, "message": "Success"})
 
 
 @watchlist.route('/', methods=['GET'])
 # @login_required
-# @token_required
+@token_required
 def get_all_watchlists(current_user):
     print('GET all Watchlists')
-    print(current_user.id)
+    print("current_user:", current_user)
     try:
-        # print(watchlist)
         #Filter gets many items, 'get' just gets the first one.
         all_watchlists = models.Watchlist.filter(user=current_user.id)
-        print(all_watchlists)
-        # breakpoint()
         watchlists = [model_to_dict(watchlist) for watchlist in all_watchlists]
-        print(watchlist)
         return jsonify(data=watchlists, status={"code": 200, "message": "Success"})
     except models.DoesNotExist:
         return jsonify(data={}, status={"code": 401, "message": "Error getting the resources"})
@@ -66,11 +62,11 @@ def update_watchlist(current_user, id):
 #DELETE ROUTE
 @watchlist.route('/<id>', methods=['DELETE'])
 # @login_required
-# @token_required
+@token_required
 def delete_watchlist(current_user, id):
-    body = id
-    print(body)
+    list_id = id
+    print("body", list_id)
     #Always check to see what the query is returning. There were difficulties with this call because it was only referencing the object, not returning. "get" actually returns the object.
-    print(models.Watchlist.get(models.Watchlist.id==body))
-    watchlist_query = models.Watchlist.get(models.Watchlist.id==body).delete_instance(recursive=True)
+    print(models.Watchlist.get(models.Watchlist.id==list_id))
+    watchlist_query = models.Watchlist.get(models.Watchlist.id==list_id).delete_instance(recursive=True)
     return jsonify(data={}, success={"code": 200, "message": "Watchlist successfully deleted"})
